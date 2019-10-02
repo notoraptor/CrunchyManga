@@ -260,7 +260,7 @@ class MangaDownloader():
         cookies = self.scraper
         cookies.cookies = LWPCookieJar('cookies.txt')
         page = self.scraper.get(url).content
-        page = BeautifulSoup(page)
+        page = BeautifulSoup(page, features="lxml")
         hidden = page.findAll("input", {u"type": u"hidden"})
         hidden = hidden[1].get("value")
         logindata = {'formname': 'login_form', 'fail_url': 'http://www.crunchyroll.com/login',
@@ -268,8 +268,8 @@ class MangaDownloader():
                      'login_form[redirect_url]': '/'}
         req = self.scraper.post(url, data=logindata)
         url = "http://www.crunchyroll.com"
-        html = self.scraper.get(url).content
-        if re.search(usuario + '(?i)', html):
+        html = self.scraper.get(url).content.decode()
+        if re.search('(?i)' + usuario, html):
             print('You have been successfully logged in.\n\n')
             cookies.cookies.save()
         else:
